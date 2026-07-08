@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shanghai Map · Annie's Places</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, "SF Pro", "Helvetica Neue", sans-serif; background: #f5f5f5; }
+
+  #map { width: 100vw; height: 100vh; }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    position: fixed; top: 16px; left: 16px; zIndex: 1000;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(12px);
+    border-radius: 12px; padding: 20px 22px;
+    box-shadow: 0 2px 24px rgba(0,0,0,0.10);
+    max-width: 310px; font-size: 13px; line-height: 1.8;
+  }
+  .sidebar h2 { font-size: 18px; margin-bottom: 2px; }
+  .sidebar .subtitle { color: #aaa; font-size: 12px; margin-bottom: 14px; }
+
+  .sidebar .section { margin-top: 14px; }
+  .sidebar .section-title {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.6px;
+    color: #999; margin-bottom: 5px; font-weight: 700;
+  }
+  .sidebar .item {
+    display: flex; align-items: flex-start; gap: 8px;
+    padding: 5px 6px; border-radius: 6px;
+    cursor: pointer; transition: background 0.12s;
+  }
+  .sidebar .item:hover { background: #f4f4f4; }
+  .sidebar .item .icon { font-size: 18px; flex-shrink: 0; width: 22px; text-align: center; }
+  .sidebar .item .info strong { display: block; color: #222; font-size: 13px; }
+  .sidebar .item .info span { color: #999; font-size: 11px; }
+
+  /* ── Leaflet popup ── */
+  .leaflet-popup-content { font-size: 13px; line-height: 1.7; min-width: 190px; }
+  .leaflet-popup-content b { font-size: 14px; }
+  .leaflet-popup-content .tag {
+    display: inline-block; padding: 1px 8px; border-radius: 10px;
+    font-size: 10px; color: #fff; margin-top: 4px; letter-spacing: 0.3px;
+  }
+  .tag-residence  { background: #e74c3c; }
+  .tag-fitness    { background: #27ae60; }
+  .tag-metro      { background: #8e44ad; }
+  .tag-dining     { background: #e67e22; }
+
+  @media (max-width: 640px) {
+    .sidebar { top: auto; bottom: 0; left: 0; right: 0; max-width: none;
+      border-radius: 16px 16px 0 0; padding: 14px 18px; font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="map"></div>
+
+<!-- ── Sidebar ── -->
+<div class="sidebar" id="sidebar">
+  <h2>📍 Shanghai Map</h2>
+  <div class="subtitle">10 locations · click to jump</div>
+
+  <div class="section">
+    <div class="section-title">🏠 Residences</div>
+    <div class="item" data-marker="apt1">
+      <span class="icon">🏠</span><span class="info"><strong>ONE OF A KIND 736</strong><span>736 Jiangsu Rd, Changning</span></span>
+    </div>
+    <div class="item" data-marker="apt2">
+      <span class="icon">🏠</span><span class="info"><strong>Shanghai Centre</strong><span>1376 Nanjing West Rd, Jing'an</span></span>
+    </div>
+    <div class="item" data-marker="apt3">
+      <span class="icon">🏠</span><span class="info"><strong>Annie's Place</strong><span>99 Changle Village, 39 Shaanxi South Ln</span></span>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🍽️ Dining &amp; Entertainment</div>
+    <div class="item" data-marker="dine1">
+      <span class="icon">🍽️</span><span class="info"><strong>MUSE 悦荟</strong><span>6F Jinzhong Plaza, 98 Huaihai Mid Rd</span></span>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🏋️ Pure Fitness</div>
+    <div class="item" data-marker="pf1">
+      <span class="icon">🏋️</span><span class="info"><strong>IAPM Mall</strong><span>999 Huaihai Mid Rd L6-L7, Xuhui</span></span>
+    </div>
+    <div class="item" data-marker="pf2">
+      <span class="icon">🏋️</span><span class="info"><strong>Central Plaza</strong><span>381 Huaihai Mid Rd L3-L4, Huangpu</span></span>
+    </div>
+    <div class="item" data-marker="pf3">
+      <span class="icon">🏋️</span><span class="info"><strong>Nanjing West Rd</strong><span>699 Nanjing West Rd L2-L4, Jing'an</span></span>
+    </div>
+    <div class="item" data-marker="pf4">
+      <span class="icon">🏋️</span><span class="info"><strong>Century Link</strong><span>1192 Century Ave L4-L5, Pudong</span></span>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🚇 Nearest Metro</div>
+    <div class="item" data-marker="metro1">
+      <span class="icon">🚇</span><span class="info"><strong>Jiangsu Road</strong><span>Line 2 · 11 — near ONE OF A KIND</span></span>
+    </div>
+    <div class="item" data-marker="metro2">
+      <span class="icon">🚇</span><span class="info"><strong>Jing'an Temple</strong><span>Line 2 · 7 — near Shanghai Centre</span></span>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Base map (clean light style) ──
+const map = L.map('map', { center: [31.224, 121.462], zoom: 14 });
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+  attribution: '&copy; <a href="https://www.openstreetmap.org/">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
+  maxZoom: 19,
+}).addTo(map);
+
+// ── Emoji icon factory ──
+function emojiIcon(emoji, size) {
+  return L.divIcon({
+    html: `<div style="
+      font-size:${size}px;line-height:1;
+      filter:drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+      text-align:center;
+    ">${emoji}</div>`,
+    className: '',
+    iconSize: [size+8, size+4],
+    iconAnchor: [(size+8)/2, (size+4)/2],
+    popupAnchor: [0, -(size+4)/2],
+  });
+}
+
+const icons = {
+  residence: emojiIcon('🏠', 28),
+  metro:    emojiIcon('🚇', 26),
+  fitness:  emojiIcon('🏋️', 26),
+  dining:   emojiIcon('🍽️', 28),
+};
+
+// ── All markers ──
+const markers = {};
+
+// Residences
+markers.apt1 = L.marker([31.2224, 121.4378], { icon: icons.residence })
+  .bindPopup('<b>🏠 ONE OF A KIND 736</b><br>📍 736 Jiangsu Road, Changning District<br><span class="tag tag-residence">Serviced Apartment</span><br>165–252 m² · near Lines 2/11').addTo(map);
+
+markers.apt2 = L.marker([31.2286, 121.4472], { icon: icons.residence })
+  .bindPopup('<b>🏠 Shanghai Centre</b><br>📍 1376 Nanjing West Road, Jing\'an District<br><span class="tag tag-residence">Serviced Apartment</span><br>472 units · 47–267 m² · near Lines 2/7').addTo(map);
+
+markers.apt3 = L.marker([31.2158, 121.4568], { icon: icons.residence })
+  .bindPopup('<b>🏠 Annie\'s Place</b><br>📍 No. 99, Changle Village<br>Lane 39, Shaanxi South Road, Huangpu District<br><span class="tag tag-residence">Lane House</span><br>French Concession · heritage lilong (1925)').addTo(map);
+
+// Dining
+markers.dine1 = L.marker([31.2256, 121.4765], { icon: icons.dining })
+  .bindPopup('<b>🍽️ MUSE 悦荟</b><br>📍 6F, Jinzhong Plaza<br>98 Huaihai Middle Road, Huangpu District<br><span class="tag tag-dining">Restaurant & KTV</span><br>Cantonese cuisine · private KTV rooms').addTo(map);
+
+// Pure Fitness
+const pf = [
+  { key:'pf1', lat:31.2175, lng:121.4597, name:'IAPM Mall',        addr:'999 Huaihai Mid Rd, L6-L7, Xuhui',  tel:'021-5389 0268' },
+  { key:'pf2', lat:31.2255, lng:121.4720, name:'Central Plaza',     addr:'381 Huaihai Mid Rd, L3-L4, Huangpu', tel:'021-6313 3008' },
+  { key:'pf3', lat:31.2309, lng:121.4550, name:'Nanjing West Rd',   addr:'699 Nanjing West Rd, L2-L4, Jing\'an', tel:'021-5283 2363' },
+  { key:'pf4', lat:31.2291, lng:121.5278, name:'Century Link',      addr:'1192 Century Ave, L4-L5, Pudong',    tel:'021-5077 5378' },
+];
+pf.forEach(p => {
+  markers[p.key] = L.marker([p.lat, p.lng], { icon: icons.fitness })
+    .bindPopup(`<b>🏋️ Pure Fitness · ${p.name}</b><br>📍 ${p.addr}<br>📞 ${p.tel}<br><span class="tag tag-fitness">Gym</span>`).addTo(map);
+});
+
+// Metro
+markers.metro1 = L.marker([31.2216, 121.4351], { icon: icons.metro })
+  .bindPopup('<b>🚇 Jiangsu Road Station</b><br>Line 2 · Line 11<br><span class="tag tag-metro">Metro</span><br>~5 min walk to ONE OF A KIND 736').addTo(map);
+
+markers.metro2 = L.marker([31.2269, 121.4474], { icon: icons.metro })
+  .bindPopup('<b>🚇 Jing\'an Temple Station</b><br>Line 2 · Line 7<br><span class="tag tag-metro">Metro</span><br>~5 min walk to Shanghai Centre').addTo(map);
+
+// ── Sidebar click → fly ──
+document.getElementById('sidebar').addEventListener('click', e => {
+  const item = e.target.closest('.item');
+  if (!item) return;
+  const m = markers[item.dataset.marker];
+  if (!m) return;
+  map.flyTo(m.getLatLng(), 16, { duration: 0.7 });
+  setTimeout(() => m.openPopup(), 750);
+});
+
+// ── Fit all markers ──
+const group = L.featureGroup(Object.values(markers));
+map.fitBounds(group.getBounds(), { padding: [40, 40], maxZoom: 14 });
+</script>
+</body>
+</html>
