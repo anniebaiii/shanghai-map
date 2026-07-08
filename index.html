@@ -50,6 +50,7 @@
   .tag-fitness    { background: #27ae60; }
   .tag-metro      { background: #8e44ad; }
   .tag-dining     { background: #e67e22; }
+  .tag-school     { background: #3498db; }
 
   @media (max-width: 640px) {
     .sidebar { top: auto; bottom: 0; left: 0; right: 0; max-width: none;
@@ -64,7 +65,7 @@
 <!-- ── Sidebar ── -->
 <div class="sidebar" id="sidebar">
   <h2>📍 Shanghai Map</h2>
-  <div class="subtitle">10 locations · click to jump</div>
+  <div class="subtitle">11 locations · click to jump</div>
 
   <div class="section">
     <div class="section-title">🏠 Residences</div>
@@ -76,6 +77,13 @@
     </div>
     <div class="item" data-marker="apt3">
       <span class="icon">🏠</span><span class="info"><strong>Annie's Place</strong><span>99 Changle Village, 39 Shaanxi South Ln</span></span>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🏫 Education</div>
+    <div class="item" data-marker="school1">
+      <span class="icon">🏫</span><span class="info"><strong>Ashley's Kindergarten</strong><span>75 Wuxing Rd, Xuhui</span></span>
     </div>
   </div>
 
@@ -141,6 +149,7 @@ const icons = {
   metro:    emojiIcon('🚇', 26),
   fitness:  emojiIcon('🏋️', 26),
   dining:   emojiIcon('🍽️', 28),
+  school:   emojiIcon('🏫', 28),
 };
 
 // ── All markers ──
@@ -155,6 +164,10 @@ markers.apt2 = L.marker([31.2286, 121.4472], { icon: icons.residence })
 
 markers.apt3 = L.marker([31.2158, 121.4568], { icon: icons.residence })
   .bindPopup('<b>🏠 Annie\'s Place</b><br>📍 No. 99, Changle Village<br>Lane 39, Shaanxi South Road, Huangpu District<br><span class="tag tag-residence">Lane House</span><br>French Concession · heritage lilong (1925)').addTo(map);
+
+// School
+markers.school1 = L.marker([31.2085, 121.4458], { icon: icons.school })
+  .bindPopup('<b>🏫 Ashley\'s Kindergarten</b><br>📍 No. 75 Wuxing Road<br>Xuhui District<br><span class="tag tag-school">Kindergarten</span>').addTo(map);
 
 // Dining
 markers.dine1 = L.marker([31.2256, 121.4765], { icon: icons.dining })
