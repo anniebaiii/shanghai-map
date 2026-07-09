@@ -65,15 +65,12 @@
 <!-- ── Sidebar ── -->
 <div class="sidebar" id="sidebar">
   <h2>📍 Shanghai Map</h2>
-  <div class="subtitle">12 locations · click to jump</div>
+  <div class="subtitle">11 locations · click to jump</div>
 
   <div class="section">
     <div class="section-title">🏠 Residences</div>
-    <div class="item" data-marker="apt1">
-      <span class="icon">🏠</span><span class="info"><strong>ONE OF A KIND 736</strong><span>736 Jiangsu Rd, Changning</span></span>
-    </div>
-    <div class="item" data-marker="apt2">
-      <span class="icon">🏠</span><span class="info"><strong>Shanghai Centre</strong><span>1376 Nanjing West Rd, Jing'an</span></span>
+    <div class="item" data-marker="apt4">
+      <span class="icon">🏠</span><span class="info"><strong>静安嘉里公寓</strong><span>1515 Nanjing West Rd, Jing'an</span></span>
     </div>
     <div class="item" data-marker="apt3">
       <span class="icon">🏠</span><span class="info"><strong>Annie's Place</strong><span>99 Changle Village, 39 Shaanxi South Ln</span></span>
@@ -116,10 +113,10 @@
   <div class="section">
     <div class="section-title">🚇 Nearest Metro</div>
     <div class="item" data-marker="metro1">
-      <span class="icon">🚇</span><span class="info"><strong>Jiangsu Road</strong><span>Line 2 · 11 — near ONE OF A KIND</span></span>
+      <span class="icon">🚇</span><span class="info"><strong>Jiangsu Road</strong><span>Line 2 · 11</span></span>
     </div>
     <div class="item" data-marker="metro2">
-      <span class="icon">🚇</span><span class="info"><strong>Jing'an Temple</strong><span>Line 2 · 7 — near Shanghai Centre</span></span>
+      <span class="icon">🚇</span><span class="info"><strong>Jing'an Temple</strong><span>Line 2 · 7 — near Kerry Residence</span></span>
     </div>
   </div>
 </div>
@@ -159,11 +156,8 @@ const icons = {
 const markers = {};
 
 // Residences
-markers.apt1 = L.marker([31.2224, 121.4378], { icon: icons.residence })
-  .bindPopup('<b>🏠 ONE OF A KIND 736</b><br>📍 736 Jiangsu Road, Changning District<br><span class="tag tag-residence">Serviced Apartment</span><br>165–252 m² · near Lines 2/11').addTo(map);
-
-markers.apt2 = L.marker([31.2286, 121.4472], { icon: icons.residence })
-  .bindPopup('<b>🏠 Shanghai Centre</b><br>📍 1376 Nanjing West Road, Jing\'an District<br><span class="tag tag-residence">Serviced Apartment</span><br>472 units · 47–267 m² · near Lines 2/7').addTo(map);
+markers.apt4 = L.marker([31.2270, 121.4493], { icon: icons.residence })
+  .bindPopup('<b>🏠 静安嘉里公寓 · Kerry Residence</b><br>📍 1515 Nanjing West Road, Jing\'an District<br><span class="tag tag-residence">Serviced Apartment</span><br>Jing\'an Kerry Centre · near Lines 2/7/14').addTo(map);
 
 markers.apt3 = L.marker([31.2158, 121.4568], { icon: icons.residence })
   .bindPopup('<b>🏠 Annie\'s Place</b><br>📍 No. 99, Changle Village<br>Lane 39, Shaanxi South Road, Huangpu District<br><span class="tag tag-residence">Lane House</span><br>French Concession · heritage lilong (1925)').addTo(map);
@@ -193,10 +187,10 @@ pf.forEach(p => {
 
 // Metro
 markers.metro1 = L.marker([31.2216, 121.4351], { icon: icons.metro })
-  .bindPopup('<b>🚇 Jiangsu Road Station</b><br>Line 2 · Line 11<br><span class="tag tag-metro">Metro</span><br>~5 min walk to ONE OF A KIND 736').addTo(map);
+  .bindPopup('<b>🚇 Jiangsu Road Station</b><br>Line 2 · Line 11<br><span class="tag tag-metro">Metro</span>').addTo(map);
 
 markers.metro2 = L.marker([31.2269, 121.4474], { icon: icons.metro })
-  .bindPopup('<b>🚇 Jing\'an Temple Station</b><br>Line 2 · Line 7<br><span class="tag tag-metro">Metro</span><br>~5 min walk to Shanghai Centre').addTo(map);
+  .bindPopup('<b>🚇 Jing\'an Temple Station</b><br>Line 2 · Line 7<br><span class="tag tag-metro">Metro</span><br>~5 min walk to Kerry Residence').addTo(map);
 
 // ── Sidebar click → fly ──
 document.getElementById('sidebar').addEventListener('click', e => {
